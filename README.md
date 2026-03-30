@@ -1,110 +1,114 @@
-# whisper-hotkey
+# WhisperBar 🎤
 
-Local voice-to-text using [OpenAI Whisper](https://github.com/openai/whisper) — no API key, no cloud, completely free.
+Local voice-to-text that lives in your macOS menubar. No API key, no cloud, completely free.
 
-Hold a hotkey → speak → release → text is pasted wherever your cursor is.
+Hold **Ctrl+Shift+R** → speak → release → text is pasted wherever your cursor is.
+
+---
+
+## Quick Install
+
+### Step 1 — Install ffmpeg
+
+```bash
+brew install ffmpeg
+```
+
+> Don't have Homebrew? Install it first: https://brew.sh
+
+### Step 2 — Clone the repo
+
+```bash
+git clone https://github.com/vbiff/whisper_app.git
+cd whisper_app
+```
+
+### Step 3 — Install Python dependencies
+
+```bash
+pip3 install -r requirements.txt
+```
+
+> First run will download the Whisper model (~145MB). This takes a minute.
+
+### Step 4 — Run
+
+Double-click **`WhisperBar.command`** in Finder.
+
+Or from terminal:
+```bash
+python3 whisper_menubar.py
+```
+
+A 🎤 icon will appear in your menubar (top-right corner).
+
+---
+
+## Usage
+
+| Action | Result |
+|--------|--------|
+| Hold **Ctrl+Shift+R** | 🔴 starts recording |
+| Release **Ctrl+Shift+R** | ⏳ transcribes → pastes text |
+| Click 🎤 → Quit | stops the app |
+
+Works in any app — terminal, browser, text editor, Slack, etc.
+
+**Language:** auto-detected (Russian, English, or any language).
+
+---
+
+## Auto-start on Login
+
+Run once to make WhisperBar launch automatically when you log in:
+
+```bash
+bash install_autostart.sh
+```
+
+That's it. WhisperBar will start silently in the background every time you turn on your Mac.
+
+To disable:
+```bash
+launchctl unload ~/Library/LaunchAgents/com.whisperbar.launch.plist
+```
+
+---
+
+## Permissions
+
+On first run, macOS may ask for two permissions:
+
+- **Microphone** — needed to record your voice
+- **Accessibility** — needed to paste text (Cmd+V simulation)
+
+Go to: **System Settings → Privacy & Security** and enable both for Terminal (or your Python).
+
+---
+
+## Model sizes
+
+Edit `MODEL_SIZE` in `whisper_menubar.py` to trade speed for accuracy:
+
+| Model  | Size   | Speed  | Accuracy |
+|--------|--------|--------|----------|
+| `tiny` | ~75MB  | fast   | ok       |
+| `base` | ~145MB | fast   | good ✅  |
+| `small`| ~465MB | medium | better   |
+| `medium`| ~1.5GB| slow  | great    |
+| `large`| ~3GB   | slow   | best     |
+
+Default is `base` — good enough for most use cases.
 
 ---
 
 ## Requirements
 
-- macOS (uses `pbcopy` + `osascript` for paste)
+- macOS
 - Python 3.8+
-- [ffmpeg](https://ffmpeg.org/)
+- ffmpeg (`brew install ffmpeg`)
 
-## Installation
-
-**1. Install ffmpeg**
-```bash
-brew install ffmpeg
-```
-
-**2. Clone the repo**
-```bash
-git clone https://github.com/mokyio8/whisper-hotkey.git
-cd whisper-hotkey
-```
-
-**3. Install Python dependencies**
-```bash
-pip3 install -r requirements.txt
-```
-
-> First run will download the Whisper model (~145MB for `base`).
-
-## Usage
-
-```bash
-python3 whisper_hotkey.py
-```
-
-- **Hold F5** → speak → **release** → text is pasted into the active window
-- **Esc** → quit
-
-Works in terminal, browser, any text field.
-
-## Configuration
-
-Edit the top of `whisper_hotkey.py`:
-
-```python
-HOTKEY = keyboard.Key.f5   # change to any key
-LANGUAGE = "ru"             # "ru" / "en" / None (auto-detect)
-MODEL_SIZE = "base"         # tiny (fast) / base / small / medium / large
-```
-
-## Model sizes
-
-| Model  | Size   | Speed  | Accuracy |
-|--------|--------|--------|----------|
-| tiny   | ~75MB  | fast   | ok       |
-| base   | ~145MB | fast   | good     |
-| small  | ~465MB | medium | better   |
-| medium | ~1.5GB | slow   | great    |
-| large  | ~3GB   | slow   | best     |
-
-For everyday use, `base` or `small` is recommended.
-
-## Permissions
-
-On first run, macOS will ask for **Accessibility** permission (needed to simulate Cmd+V).
-
-Go to: **System Settings → Privacy & Security → Accessibility** → enable Terminal (or your Python).
-
-## Auto-start on login
-
-Run once to make WhisperBar launch automatically at startup:
-
-```bash
-PLIST="$HOME/Library/LaunchAgents/com.whisperbar.launch.plist"
-cat > "$PLIST" << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.whisperbar.launch</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>/bin/bash</string>
-        <string>/Users/YOUR_USERNAME/Desktop/whisper_app/whisper_app/WhisperBar.command</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <false/>
-</dict>
-</plist>
-EOF
-launchctl load "$PLIST"
-```
-
-> Replace `YOUR_USERNAME` with your macOS username (run `whoami` to check).
-
-To disable autostart:
-```bash
-launchctl unload ~/Library/LaunchAgents/com.whisperbar.launch.plist
-```
+---
 
 ## License
 
