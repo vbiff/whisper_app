@@ -62,7 +62,7 @@ class WhisperApp(rumps.App):
         super().__init__("🎙", quit_button="Quit")
         self.stream = None
         self.menu = [
-            rumps.MenuItem("Hold F5 to record", callback=None),
+            rumps.MenuItem("Hold Ctrl+Shift+R to record", callback=None),
             None,  # separator
         ]
 
@@ -94,21 +94,35 @@ def run():
 
     app = WhisperApp()
 
-    # Global hotkey via pynput — F5
+    # Global hotkey: hold Ctrl+Shift+R to record, release to transcribe
     from pynput import keyboard
 
+    pressed = set()
+    COMBO = {keyboard.Key.ctrl, keyboard.Key.shift, keyboard.KeyCode.from_char('r')}
+
     def on_press(key):
-        if key == keyboard.Key.f5:
+        # Normalize ctrl_l/ctrl_r → ctrl
+        if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
+            key = keyboard.Key.ctrl
+        if key in (keyboard.Key.shift, keyboard.Key.shift_l, keyboard.Key.shift_r):
+            key = keyboard.Key.shift
+        pressed.add(key)
+        if pressed >= COMBO and not is_recording:
             app.start_recording()
 
     def on_release(key):
-        if key == keyboard.Key.f5:
+        if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
+            key = keyboard.Key.ctrl
+        if key in (keyboard.Key.shift, keyboard.Key.shift_l, keyboard.Key.shift_r):
+            key = keyboard.Key.shift
+        pressed.discard(key)
+        if is_recording:
             app.stop_recording()
 
     listener = keyboard.Listener(
         on_press=on_press,
         on_release=on_release,
-        suppress=True
+        suppress=False
     )
     listener.start()
 
