@@ -59,7 +59,7 @@ def audio_callback(indata, frames, time, status):
 
 class WhisperApp(rumps.App):
     def __init__(self):
-        super().__init__("🎙", quit_button="Quit")
+        super().__init__("🎤", quit_button="Quit")
         self.stream = None
         self.menu = [
             rumps.MenuItem("Hold Ctrl+Shift+R to record", callback=None),
@@ -85,7 +85,7 @@ class WhisperApp(rumps.App):
 
     def _do_transcribe(self):
         transcribe()
-        self.title = "🎙"
+        self.title = "🎤"
 
 
 def run():
