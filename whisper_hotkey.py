@@ -94,5 +94,5 @@ def transcribe():
 
 # Запуск
 with sd.InputStream(samplerate=SAMPLE_RATE, channels=1, callback=audio_callback):
-    with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+    with keyboard.Listener(on_press=on_press, on_release=on_release, suppress=True) as listener:
         listener.join()
