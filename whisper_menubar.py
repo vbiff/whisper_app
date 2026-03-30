@@ -68,7 +68,7 @@ class WhisperApp(rumps.App):
         super().__init__("🎤", quit_button="Quit")
         self.stream = None
         self.menu = [
-            rumps.MenuItem("Hold Ctrl+Shift+R to record", callback=None),
+            rumps.MenuItem("Hold Shift+Option to record", callback=None),
             None,  # separator
         ]
 
@@ -108,23 +108,22 @@ def run():
     from pynput import keyboard
 
     pressed = set()
-    COMBO = {keyboard.Key.ctrl, keyboard.Key.shift, keyboard.KeyCode.from_char('r')}
+    COMBO = {keyboard.Key.shift, keyboard.Key.alt}
 
     def on_press(key):
-        # Normalize ctrl_l/ctrl_r → ctrl
-        if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
-            key = keyboard.Key.ctrl
         if key in (keyboard.Key.shift, keyboard.Key.shift_l, keyboard.Key.shift_r):
             key = keyboard.Key.shift
+        if key in (keyboard.Key.alt, keyboard.Key.alt_l, keyboard.Key.alt_r):
+            key = keyboard.Key.alt
         pressed.add(key)
         if pressed >= COMBO and not is_recording:
             app.start_recording()
 
     def on_release(key):
-        if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
-            key = keyboard.Key.ctrl
         if key in (keyboard.Key.shift, keyboard.Key.shift_l, keyboard.Key.shift_r):
             key = keyboard.Key.shift
+        if key in (keyboard.Key.alt, keyboard.Key.alt_l, keyboard.Key.alt_r):
+            key = keyboard.Key.alt
         pressed.discard(key)
         # Stop only on first key release (when combo breaks)
         if is_recording and not (pressed >= COMBO):
