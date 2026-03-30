@@ -71,6 +71,41 @@ On first run, macOS will ask for **Accessibility** permission (needed to simulat
 
 Go to: **System Settings → Privacy & Security → Accessibility** → enable Terminal (or your Python).
 
+## Auto-start on login
+
+Run once to make WhisperBar launch automatically at startup:
+
+```bash
+PLIST="$HOME/Library/LaunchAgents/com.whisperbar.launch.plist"
+cat > "$PLIST" << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.whisperbar.launch</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/YOUR_USERNAME/Desktop/whisper_app/whisper_app/WhisperBar.command</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <false/>
+</dict>
+</plist>
+EOF
+launchctl load "$PLIST"
+```
+
+> Replace `YOUR_USERNAME` with your macOS username (run `whoami` to check).
+
+To disable autostart:
+```bash
+launchctl unload ~/Library/LaunchAgents/com.whisperbar.launch.plist
+```
+
 ## License
 
 MIT
