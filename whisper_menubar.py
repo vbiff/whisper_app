@@ -21,11 +21,17 @@ MODEL_SIZE = "small"
 recording = []
 is_recording = False
 model = None
+_app_ref = None
 
 
 def load_model():
     global model
+    # Show loading indicator in menubar
+    if _app_ref:
+        _app_ref.title = "⬇️"
     model = whisper.load_model(MODEL_SIZE)
+    if _app_ref:
+        _app_ref.title = "🎤"
 
 
 def transcribe():
@@ -68,6 +74,8 @@ class WhisperApp(rumps.App):
 
     def start_recording(self):
         global is_recording, recording
+        if model is None:
+            return  # model still loading, ignore
         is_recording = True
         recording = []
         self.title = "🔴"
@@ -89,10 +97,12 @@ class WhisperApp(rumps.App):
 
 
 def run():
-    # Load model in background
-    threading.Thread(target=load_model, daemon=True).start()
-
+    global _app_ref
     app = WhisperApp()
+    _app_ref = app
+
+    # Load model in background (shows ⬇️ while downloading)
+    threading.Thread(target=load_model, daemon=True).start()
 
     # Global hotkey: hold Ctrl+Shift+R to record, release to transcribe
     from pynput import keyboard
