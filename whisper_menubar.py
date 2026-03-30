@@ -16,7 +16,7 @@ import threading
 
 SAMPLE_RATE = 16000
 LANGUAGE = None  # None = auto-detect (Russian, English, any language)
-MODEL_SIZE = "base"
+MODEL_SIZE = "small"
 
 recording = []
 is_recording = False
