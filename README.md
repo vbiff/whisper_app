@@ -29,6 +29,12 @@ cd whisper_app
 pip3 install -r requirements.txt
 ```
 ### Step 3.5 — Install Local Whisper medium
+
+# 1. Создать папку кэша
+```bash
+mkdir -p ~/.cache/whisper
+```
+
 ```bash
 curl -L "https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt" -o ~/.cache/whisper/medium.pt
 ```
