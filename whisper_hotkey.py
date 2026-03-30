@@ -62,10 +62,20 @@ def audio_callback(indata, frames, time, status):
 
 def transcribe():
     if not recording:
-        print(" (empty)")
+        print(" (no audio captured — check microphone permissions)")
         return
 
     audio = np.concatenate(recording, axis=0).flatten()
+    duration = len(audio) / SAMPLE_RATE
+    print(f" ({duration:.1f}s captured)", end="", flush=True)
+
+    if duration < 0.3:
+        print(" (too short, skipped)")
+        return
+
+    if np.max(np.abs(audio)) < 0.001:
+        print(" (silence — check microphone permissions in System Settings)")
+        return
 
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as f:
         wav.write(f.name, SAMPLE_RATE, audio)
