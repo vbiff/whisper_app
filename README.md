@@ -28,6 +28,10 @@ cd whisper_app
 ```bash
 pip3 install -r requirements.txt
 ```
+### Step 3.5 — Install Local Whisper medium
+```bash
+curl -L "https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt" -o ~/.cache/whisper/medium.pt
+```
 
 > First run will download the Whisper model (~145MB). This takes a minute.
 
