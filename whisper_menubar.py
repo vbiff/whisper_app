@@ -126,7 +126,8 @@ def run():
         if key in (keyboard.Key.shift, keyboard.Key.shift_l, keyboard.Key.shift_r):
             key = keyboard.Key.shift
         pressed.discard(key)
-        if is_recording:
+        # Stop only on first key release (when combo breaks)
+        if is_recording and not (pressed >= COMBO):
             app.stop_recording()
 
     listener = keyboard.Listener(
