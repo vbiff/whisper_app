@@ -76,18 +76,33 @@ class WhisperApp(rumps.App):
         global is_recording, recording
         if model is None:
             return  # model still loading, ignore
+        # Close previous stream if exists
+        if self.stream is not None:
+            try:
+                self.stream.stop()
+                self.stream.close()
+            except Exception:
+                pass
+            self.stream = None
         is_recording = True
         recording = []
         self.title = "🔴"
-        if self.stream is None or not self.stream.active:
-            self.stream = sd.InputStream(
-                samplerate=SAMPLE_RATE, channels=1, callback=audio_callback
-            )
-            self.stream.start()
+        self.stream = sd.InputStream(
+            samplerate=SAMPLE_RATE, channels=1, callback=audio_callback
+        )
+        self.stream.start()
 
     def stop_recording(self):
         global is_recording
         is_recording = False
+        # Stop stream immediately to free resources
+        if self.stream is not None:
+            try:
+                self.stream.stop()
+                self.stream.close()
+            except Exception:
+                pass
+            self.stream = None
         self.title = "⏳"
         threading.Thread(target=self._do_transcribe, daemon=True).start()
 
