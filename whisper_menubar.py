@@ -15,7 +15,7 @@ import numpy as np
 import threading
 
 SAMPLE_RATE = 16000
-LANGUAGE = "ru"
+LANGUAGE = None  # None = auto-detect (Russian, English, any language)
 MODEL_SIZE = "base"
 
 recording = []
