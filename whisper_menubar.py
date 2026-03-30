@@ -98,8 +98,6 @@ def run():
     from pynput import keyboard
 
     def on_press(key):
-        if key == keyboard.Key.f5 and not app._ns_app_started:
-            return
         if key == keyboard.Key.f5:
             app.start_recording()
 
