@@ -47,8 +47,8 @@ def transcribe():
 
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as f:
         wav.write(f.name, SAMPLE_RATE, audio)
-        result = model.transcribe(f.name, language=LANGUAGE)
-        text = result["text"].strip()
+        result = model.transcribe(f.name, language=LANGUAGE, condition_on_previous_text=False)
+        text = " ".join(seg["text"].strip() for seg in result["segments"]).strip()
 
     if text:
         subprocess.run(["pbcopy"], input=text.encode())
@@ -159,7 +159,6 @@ def run():
         on_press=on_press,
         on_release=on_release,
         suppress=False,
-        on_activate=lambda: pressed.clear(),  # reset state on focus change
     )
     listener.start()
 
