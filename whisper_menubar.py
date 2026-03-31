@@ -91,9 +91,20 @@ class WhisperApp(rumps.App):
             samplerate=SAMPLE_RATE, channels=1, callback=audio_callback
         )
         self.stream.start()
+        # Watchdog: auto-stop if recording hangs (e.g. key-up event was lost)
+        self._watchdog = threading.Timer(30.0, self._watchdog_stop)
+        self._watchdog.start()
+
+    def _watchdog_stop(self):
+        if is_recording:
+            self.stop_recording()
 
     def stop_recording(self):
         global is_recording
+        # Cancel watchdog if it's still running
+        if hasattr(self, '_watchdog') and self._watchdog is not None:
+            self._watchdog.cancel()
+            self._watchdog = None
         is_recording = False
         # Stop stream immediately to free resources
         if self.stream is not None:
@@ -147,7 +158,8 @@ def run():
     listener = keyboard.Listener(
         on_press=on_press,
         on_release=on_release,
-        suppress=False
+        suppress=False,
+        on_activate=lambda: pressed.clear(),  # reset state on focus change
     )
     listener.start()
 
